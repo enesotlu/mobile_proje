@@ -6,6 +6,7 @@ import '../exercises/exercises_tab.dart';
 import '../calculations/calculations_tab.dart';
 import '../nutrition/nutrition_tab.dart';
 import '../supplements/supplements_tab.dart';
+import '../auth/login_screen.dart';
 
 
 class HomeTab extends StatelessWidget {
@@ -14,8 +15,16 @@ class HomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    void _logout() {
-      // Çıkış işlemleri buraya
+    void _logout() async {
+      try {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+              (route) => false,
+        );
+      } catch (e) {
+        print("Hata: $e");
+      }
     }
 
     return Scaffold(
