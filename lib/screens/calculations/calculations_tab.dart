@@ -4,6 +4,7 @@ import '../../providers/auth_provider.dart';
 import 'bmi_calculator_screen.dart';
 import 'cardio_stopwatch_screen.dart';
 import 'calorie_estimation_screen.dart';
+import 'daily_calorie_needs_screen.dart'; // YENİ DOSYAYI İMPORT ETTİK
 
 class CalculationsTab extends StatelessWidget {
   const CalculationsTab({super.key});
@@ -18,7 +19,7 @@ class CalculationsTab extends StatelessWidget {
       body: Consumer(
         builder: (context, ref, child) {
           final user = ref.watch(currentUserProvider);
-          
+
           if (user == null) {
             return const Center(
               child: Text('Please complete your profile first'),
@@ -28,6 +29,7 @@ class CalculationsTab extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              // 1. BMI
               _buildCalculationCard(
                 context,
                 title: 'BMI Calculator',
@@ -44,6 +46,8 @@ class CalculationsTab extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 16),
+
+              // 2. Stopwatch
               _buildCalculationCard(
                 context,
                 title: 'Cardio Stopwatch',
@@ -60,6 +64,8 @@ class CalculationsTab extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 16),
+
+              // 3. Calorie Estimation (Activity Burn)
               _buildCalculationCard(
                 context,
                 title: 'Calorie Estimation',
@@ -75,6 +81,24 @@ class CalculationsTab extends StatelessWidget {
                   );
                 },
               ),
+              const SizedBox(height: 16),
+
+              // 4. NEW BUTTON: Daily Calorie Needs (Intake)
+              _buildCalculationCard(
+                context,
+                title: 'Daily Calorie Needs',
+                description: 'Calculate your daily intake for weight loss or muscle gain',
+                icon: Icons.restaurant_menu, // Farklı bir ikon
+                color: Colors.deepPurple,    // Farklılaşması için Mor renk
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DailyCalorieNeedsScreen(user: user),
+                    ),
+                  );
+                },
+              ),
             ],
           );
         },
@@ -83,13 +107,13 @@ class CalculationsTab extends StatelessWidget {
   }
 
   Widget _buildCalculationCard(
-    BuildContext context, {
-    required String title,
-    required String description,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
+      BuildContext context, {
+        required String title,
+        required String description,
+        required IconData icon,
+        required Color color,
+        required VoidCallback onTap,
+      }) {
     return Card(
       elevation: 4,
       child: InkWell(
@@ -138,4 +162,3 @@ class CalculationsTab extends StatelessWidget {
     );
   }
 }
-
