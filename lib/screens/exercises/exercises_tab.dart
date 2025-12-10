@@ -1,23 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../../models/exercise_model.dart';
 import '../../providers/task_provider.dart';
-
-// --- MODEL ---
-class ExerciseItem {
-  final String title;
-  final String description;
-  final List<String> tags;
-  final String imageUrl;
-  final List<String> steps;
-
-  ExerciseItem({
-    required this.title,
-    required this.description,
-    required this.tags,
-    required this.imageUrl,
-    required this.steps,
-  });
-}
+import '../../services/exercise_service.dart';
+import 'exercise_detail_screen.dart';
 
 class ExercisesTab extends ConsumerStatefulWidget {
   const ExercisesTab({super.key});
@@ -27,172 +14,147 @@ class ExercisesTab extends ConsumerStatefulWidget {
 }
 
 class _ExercisesTabState extends ConsumerState<ExercisesTab> {
-  String _selectedCategory = "Tümü";
-  String _selectedEquipment = "Tümü";
-
-  final List<String> _categories = ["Tümü", "Göğüs", "Sırt", "Bacak", "Omuz", "Kol", "Karın", "Cardio"];
-  final List<String> _equipments = ["Tümü", "Barbell", "Dumbbell", "Makine", "Vücut Ağırlığı", "Kablo"];
-
-  // --- GENİŞLETİLMİŞ EGZERSİZ KÜTÜPHANESİ ---
-  final List<ExerciseItem> _allExercises = [
-    // --- GÖĞÜS ---
-    ExerciseItem(
-      title: "Bench Press",
-      description: "Göğüs kasları için temel kuvvet hareketi.",
-      tags: ["Göğüs", "Barbell"],
-      imageUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Sırt üstü sehpaya uzanın.", "Barı omuz genişliğinden biraz geniş tutun.", "Barı göğüs ucunuza kontrollü indirin.", "Nefes vererek yukarı itin."],
-    ),
-    ExerciseItem(
-      title: "Incline Dumbbell Press",
-      description: "Üst göğüs kaslarını hedefleyen itiş hareketi.",
-      tags: ["Göğüs", "Dumbbell"],
-      imageUrl: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Sehpayı 30-45 derece eğime getirin.", "Dumbbell'ları omuz hizasında tutun.", "Yukarı doğru itin ve tepe noktada göğsü sıkın.", "Kontrollü şekilde indirin."],
-    ),
-    ExerciseItem(
-      title: "Cable Crossover",
-      description: "Göğüs kaslarını izole eden sıkıştırma hareketi.",
-      tags: ["Göğüs", "Kablo"],
-      imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Kablo makinesinin ortasında durun.", "Kolları hafif bükülü tutarak öne doğru birleştirin.", "Göğüs kaslarını iyice sıkın.", "Yavaşça başlangıç konumuna dönün."],
-    ),
-
-    // --- SIRT ---
-    ExerciseItem(
-      title: "Deadlift",
-      description: "Tüm vücut kuvveti ve arka zincir gelişimi.",
-      tags: ["Sırt", "Barbell"],
-      imageUrl: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Barın önünde durun, ayaklar kalça genişliğinde.", "Kalçayı geriye iterek barı kavrayın.", "Sırt düz, göğüs yukarıda barı kaldırın.", "Tepe noktada kalçayı sıkın."],
-    ),
-    ExerciseItem(
-      title: "Lat Pulldown",
-      description: "Sırt genişliği ve kanat kasları için.",
-      tags: ["Sırt", "Makine"],
-      imageUrl: "https://images.unsplash.com/photo-1598289431512-b97b0917affc?auto=format&fit=crop&q=80&w=2074",
-      steps: ["Barı geniş tutun.", "Barı göğsünüzün üst kısmına çekin.", "Dirsekleri geriye ve aşağıya odaklayın.", "Yavaşça yukarı bırakın."],
-    ),
-    ExerciseItem(
-      title: "Seated Cable Row",
-      description: "Sırt kalınlığı ve orta sırt detayları için.",
-      tags: ["Sırt", "Kablo"],
-      imageUrl: "https://images.unsplash.com/photo-1603287681836-e60567a2d119?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Sırtınız dik bir şekilde oturun.", "Kulpu karnınıza doğru çekin.", "Kürek kemiklerini birbirine yaklaştırın.", "Kolları öne doğru uzatın."],
-    ),
-
-    // --- BACAK ---
-    ExerciseItem(
-      title: "Squat",
-      description: "Bacak ve kalça gelişimi için kral hareket.",
-      tags: ["Bacak", "Barbell"],
-      imageUrl: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&q=80&w=2069",
-      steps: ["Barı sırtınıza yerleştirin.", "Kalçayı geriye iterek çömelin.", "Dizler ayak ucunu geçmemeli.", "Topuklardan güç alarak kalkın."],
-    ),
-    ExerciseItem(
-      title: "Leg Press",
-      description: "Yüksek ağırlıkla bacak kaslarını çalıştırma.",
-      tags: ["Bacak", "Makine"],
-      imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Makineye oturun ve ayakları platforma yerleştirin.", "Kilidi açıp ağırlığı kontrollü indirin.", "Dizleri kilitlemeden ağırlığı itin."],
-    ),
-    ExerciseItem(
-      title: "Lunges",
-      description: "Tek bacak kuvveti ve denge.",
-      tags: ["Bacak", "Dumbbell"],
-      imageUrl: "https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Bir adım öne atın.", "Arka diz yere değecek kadar alçalın.", "Ön bacaktan güç alarak başlangıca dönün.", "Diğer bacakla tekrarlayın."],
-    ),
-    ExerciseItem(
-      title: "Leg Extension",
-      description: "Ön bacak (Quadriceps) izolasyonu.",
-      tags: ["Bacak", "Makine"],
-      imageUrl: "https://plus.unsplash.com/premium_photo-1672363353887-d5a9d1a3c841?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Makineye oturun.", "Bacaklarınızı dümdüz olana kadar kaldırın.", "Tepe noktada ön bacakları sıkın.", "Yavaşça indirin."],
-    ),
-
-    // --- OMUZ ---
-    ExerciseItem(
-      title: "Overhead Press",
-      description: "Omuz kütlesi ve genel güç.",
-      tags: ["Omuz", "Barbell"],
-      imageUrl: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=2069",
-      steps: ["Barı göğüs hizasında tutun.", "Başınızı hafif geri çekerek barı yukarı itin.", "Tepe noktada kollar düz olsun.", "Kontrollü indirin."],
-    ),
-    ExerciseItem(
-      title: "Lateral Raise",
-      description: "Yan omuzları genişletmek için.",
-      tags: ["Omuz", "Dumbbell"],
-      imageUrl: "https://images.unsplash.com/photo-1541600383005-565c949cf777?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Dumbbell'ları yanlarda tutun.", "Dirsekleri hafif bükerek kolları yana açın.", "Omuz hizasına kadar kaldırın.", "Yavaşça indirin."],
-    ),
-    ExerciseItem(
-      title: "Face Pull",
-      description: "Arka omuz ve postür düzeltici.",
-      tags: ["Omuz", "Kablo"],
-      imageUrl: "https://images.unsplash.com/photo-1598289431512-b97b0917affc?auto=format&fit=crop&q=80&w=2074",
-      steps: ["Halatı göz hizasında ayarlayın.", "Halatı yüzünüze doğru çekin.", "Dirsekleri dışarı ve geriye açın.", "Kontrollü bırakın."],
-    ),
-
-    // --- KOL ---
-    ExerciseItem(
-      title: "Barbell Curl",
-      description: "Biceps (Pazu) kütlesi için.",
-      tags: ["Kol", "Barbell"],
-      imageUrl: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Barı omuz genişliğinde tutun.", "Dirsekleri vücuda sabitleyin.", "Barı göğsünüze doğru kaldırın.", "Yavaşça indirin."],
-    ),
-    ExerciseItem(
-      title: "Tricep Pushdown",
-      description: "Arka kol kaslarını izole eder.",
-      tags: ["Kol", "Kablo"],
-      imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Halatı veya barı üstten tutun.", "Dirsekleri vücuda yapıştırın.", "Aşağı doğru tam kilitlenene kadar itin.", "Yavaşça yukarı bırakın."],
-    ),
-    ExerciseItem(
-      title: "Hammer Curl",
-      description: "Biceps ve ön kol gelişimi.",
-      tags: ["Kol", "Dumbbell"],
-      imageUrl: "https://images.unsplash.com/photo-1581009137042-c552e485697a?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Dumbbell'ları avuç içleri birbirine bakacak şekilde tutun.", "Dirsekleri oynatmadan kaldırın.", "İndirirken kontrolü bırakmayın."],
-    ),
-
-    // --- KARIN & CARDIO ---
-    ExerciseItem(
-      title: "Plank",
-      description: "Core bölgesi dayanıklılığı.",
-      tags: ["Karın", "Vücut Ağırlığı"],
-      imageUrl: "https://plus.unsplash.com/premium_photo-1672046218138-085e7d58356d?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Dirsekler üzerinde şınav pozisyonu alın.", "Vücut düz bir çizgi olmalı.", "Karnı sıkın, belin çukurlaşmasını önleyin.", "Süre bitene kadar bekleyin."],
-    ),
-    ExerciseItem(
-      title: "Crunch",
-      description: "Üst karın kaslarını hedefler.",
-      tags: ["Karın", "Vücut Ağırlığı"],
-      imageUrl: "https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?auto=format&fit=crop&q=80&w=2069",
-      steps: ["Sırt üstü yatın, dizleri bükün.", "Elleri başın arkasına koyun.", "Kürek kemiklerini yerden kaldırarak öne bükülün.", "Yavaşça geri yatın."],
-    ),
-    ExerciseItem(
-      title: "Koşu Bandı",
-      description: "Kardiyovasküler dayanıklılık ve yağ yakımı.",
-      tags: ["Cardio", "Makine"],
-      imageUrl: "https://images.unsplash.com/photo-1576678927484-cc907957088c?auto=format&fit=crop&q=80&w=2070",
-      steps: ["Bandın üzerine çıkın ve hızı ayarlayın.", "Dik durun ve düzenli nefes alın.", "İstediğiniz süre boyunca tempolu yürüyün veya koşun."],
-    ),
-  ];
-
+  final TextEditingController _searchController = TextEditingController();
   final TextEditingController _setsController = TextEditingController(text: "3");
   final TextEditingController _repsController = TextEditingController(text: "12");
 
+  String _selectedCategory = "Tümü";
+  String _selectedEquipment = "Tümü";
+  String _selectedDifficulty = "Tümü";
+
+  final List<String> _categories = ["Tümü", "Göğüs", "Sırt", "Bacak", "Omuz", "Kol", "Karın", "Cardio"];
+  final List<String> _equipments = ["Tümü", "Barbell", "Dumbbell", "Makine", "Vücut Ağırlığı", "Kablo"];
+  final List<String> _difficulties = ["Tümü", "Beginner", "Intermediate", "Advanced"];
+
+  final Map<String, String> _bodyPartMap = {
+    "Göğüs": "chest",
+    "Sırt": "back",
+    "Bacak": "upper legs",
+    "Omuz": "shoulders",
+    "Kol": "upper arms",
+    "Karın": "waist",
+    "Cardio": "cardio",
+  };
+
+  final Map<String, String> _equipmentMap = {
+    "Barbell": "barbell",
+    "Dumbbell": "dumbbell",
+    "Makine": "leverage machine",
+    "Vücut Ağırlığı": "body weight",
+    "Kablo": "cable",
+  };
+
+  bool _isLoading = true;
+  String? _error;
+  List<ExerciseModel> _exercises = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchExercises();
+    _searchController.addListener(() => setState(() {}));
+  }
+
   @override
   void dispose() {
+    _searchController.dispose();
     _setsController.dispose();
     _repsController.dispose();
     super.dispose();
   }
 
-  // --- ADD DIALOG (POP-UP) ---
-  void _showAddToWorkoutDialog(BuildContext context, ExerciseItem exercise) {
+  Future<void> _fetchExercises() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final bodyPart = _bodyPartMap[_selectedCategory];
+      final equipment = _equipmentMap[_selectedEquipment];
+      final data = await ExerciseService.fetchExercises(
+        bodyPart: bodyPart,
+        equipment: equipment,
+        limit: 80,
+      );
+      setState(() {
+        _exercises = data;
+      });
+    } catch (_) {
+      setState(() {
+        _error = "ExerciseDB verisi alınamadı. Lütfen tekrar deneyin.";
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  List<ExerciseModel> get _filteredExercises {
+    final query = _searchController.text.toLowerCase();
+    return _exercises.where((ex) {
+      final matchesSearch = query.isEmpty || ex.name.toLowerCase().contains(query);
+      final matchesDifficulty = _selectedDifficulty == "Tümü" || (ex.difficulty ?? "Intermediate").toLowerCase() == _selectedDifficulty.toLowerCase();
+      return matchesSearch && matchesDifficulty;
+    }).toList();
+  }
+
+  void _showFilterSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF0F172A),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text("Filtreler", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  Icon(Icons.filter_list, color: Colors.cyanAccent),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildFilterDropdown("Kas Grubu", _selectedCategory, _categories, (val) {
+                setState(() => _selectedCategory = val ?? "Tümü");
+              }),
+              const SizedBox(height: 12),
+              _buildFilterDropdown("Ekipman", _selectedEquipment, _equipments, (val) {
+                setState(() => _selectedEquipment = val ?? "Tümü");
+              }),
+              const SizedBox(height: 12),
+              _buildFilterDropdown("Zorluk", _selectedDifficulty, _difficulties, (val) {
+                setState(() => _selectedDifficulty = val ?? "Tümü");
+              }),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.cyanAccent,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _fetchExercises();
+                  },
+                  child: const Text("Filtreyi Uygula"),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showAddToWorkoutDialog(BuildContext context, ExerciseModel exercise) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -201,7 +163,9 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 20, right: 20, top: 20,
+            left: 20,
+            right: 20,
+            top: 20,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -210,16 +174,29 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
               Row(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      exercise.imageUrl,
-                      width: 60, height: 60, fit: BoxFit.cover,
-                      // Resim yüklenemezse mavi ikon
-                      errorBuilder: (c,e,s) => Container(width:60, height:60, color:Colors.grey, child: const Icon(Icons.fitness_center, color: Colors.blue)),
-                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    child: exercise.imageUrl != null
+                        ? Image.network(
+                            exercise.imageUrl!,
+                            width: 70,
+                            height: 70,
+                            fit: BoxFit.cover,
+                            errorBuilder: (c, e, s) => Container(
+                              width: 70,
+                              height: 70,
+                              color: Colors.grey.shade800,
+                              child: const Icon(Icons.fitness_center, color: Colors.cyanAccent),
+                            ),
+                          )
+                        : Container(
+                            width: 70,
+                            height: 70,
+                            color: Colors.grey.shade800,
+                            child: const Icon(Icons.fitness_center, color: Colors.cyanAccent),
+                          ),
                   ),
                   const SizedBox(width: 12),
-                  Expanded(child: Text(exercise.title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+                  Expanded(child: Text(exercise.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
                 ],
               ),
               const SizedBox(height: 20),
@@ -247,15 +224,16 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  // Mavi Buton
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.cyanAccent, foregroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                   onPressed: () {
                     final subtitle = "${_setsController.text} x ${_repsController.text}";
-                    ref.read(taskProvider.notifier).addTask(exercise.title, subtitle);
+                    ref.read(taskProvider.notifier).addTask(exercise.name, subtitle);
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${exercise.title} eklendi!"), backgroundColor: Colors.green));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("${exercise.name} eklendi!"), backgroundColor: Colors.green),
+                    );
                   },
-                  child: const Text("Listeme Ekle", style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: const Text("Listeme Ekle", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(height: 30),
@@ -266,233 +244,303 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
     );
   }
 
-  void _navigateToDetail(BuildContext context, ExerciseItem exercise) {
+  void _navigateToDetail(BuildContext context, ExerciseModel exercise) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ExerciseDetailScreen(
-          exercise: exercise,
-          onAddPressed: () => _showAddToWorkoutDialog(context, exercise),
-        ),
+        builder: (context) => ExerciseDetailScreen(exercise: exercise),
       ),
     );
-  }
-
-  // --- FILTER LOGIC ---
-  List<ExerciseItem> get _filteredExercises {
-    return _allExercises.where((exercise) {
-      bool categoryMatches = _selectedCategory == "Tümü" || exercise.tags.contains(_selectedCategory);
-      bool equipmentMatches = _selectedEquipment == "Tümü" || exercise.tags.contains(_selectedEquipment);
-      return categoryMatches && equipmentMatches;
-    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final displayList = _filteredExercises;
-
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFF0B1021),
       appBar: AppBar(
-        // Mavi AppBar
-        backgroundColor: Colors.blue,
-        title: const Text("Egzersiz Kütüphanesi", style: TextStyle(color: Colors.white)),
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: const Color(0xFF0B1021),
+        elevation: 0,
+        title: const Text("Exercises", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_alt_rounded, color: Colors.cyanAccent),
+            onPressed: _showFilterSheet,
+          ),
+        ],
       ),
       body: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: Colors.white,
-            child: Column(
-              children: [
-                _buildRealFilterDropdown("Kasa Göre Filtrele", _selectedCategory, _categories, (val) => setState(() => _selectedCategory = val!)),
-                const SizedBox(height: 12),
-                _buildRealFilterDropdown("Ekipmana Göre Filtrele", _selectedEquipment, _equipments, (val) => setState(() => _selectedEquipment = val!)),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: displayList.length,
-              itemBuilder: (context, index) {
-                return _buildExerciseCard(context, displayList[index]);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRealFilterDropdown(String label, String value, List<String> items, ValueChanged<String?> onChanged) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400), borderRadius: BorderRadius.circular(4)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[600])),
-          DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: value, isExpanded: true,
-              icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
-              style: const TextStyle(fontSize: 15, color: Colors.black87),
-              onChanged: onChanged,
-              items: items.map((val) => DropdownMenuItem(value: val, child: Text(val))).toList(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildExerciseCard(BuildContext context, ExerciseItem item) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white, borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: () => _navigateToDetail(context, item),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
             child: Row(
               children: [
-                Container(
-                  width: 50, height: 50,
-                  // Mavi tonlu yuvarlak arka plan
-                  decoration: BoxDecoration(color: Colors.blue.shade50, shape: BoxShape.circle),
-                  child: ClipOval(
-                    child: Image.network(
-                      item.imageUrl, fit: BoxFit.cover,
-                      // Resim yüklenemezse mavi ikon
-                      errorBuilder: (c,e,s) => const Icon(Icons.fitness_center, color: Colors.blue),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF11182F),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.cyanAccent.withOpacity(0.3)),
+                    ),
+                    child: TextField(
+                      controller: _searchController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        hintText: "Search exercises...",
+                        hintStyle: TextStyle(color: Colors.white54),
+                        prefixIcon: Icon(Icons.search, color: Colors.cyanAccent),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(item.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      Text(item.description, style: TextStyle(color: Colors.grey[600], fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
-                    ],
+                const SizedBox(width: 12),
+                IconButton(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.cyanAccent,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),
-                ),
-                InkWell(
-                  onTap: () => _showAddToWorkoutDialog(context, item),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    // Mavi "Ekle" butonu
-                    decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(20)),
-                    child: const Text("Ekle", style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-                  ),
+                  onPressed: _showFilterSheet,
+                  icon: const Icon(Icons.tune),
                 )
               ],
             ),
           ),
+          SizedBox(
+            height: 48,
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              scrollDirection: Axis.horizontal,
+              itemCount: _categories.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                final cat = _categories[index];
+                final isSelected = cat == _selectedCategory;
+                return ChoiceChip(
+                  label: Text(cat),
+                  selected: isSelected,
+                  onSelected: (_) {
+                    setState(() => _selectedCategory = cat);
+                    _fetchExercises();
+                  },
+                  labelStyle: TextStyle(
+                    color: isSelected ? Colors.black : Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  selectedColor: Colors.cyanAccent,
+                  backgroundColor: const Color(0xFF11182F),
+                  side: BorderSide(color: Colors.cyanAccent.withOpacity(0.4)),
+                );
+              },
+            ),
+          ),
+          Expanded(child: _buildContent()),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator(color: Colors.cyanAccent));
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white70)),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: _fetchExercises,
+              icon: const Icon(Icons.refresh),
+              label: const Text("Tekrar dene"),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.cyanAccent, foregroundColor: Colors.black),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final data = _filteredExercises;
+    if (data.isEmpty) {
+      return const Center(child: Text("Gösterilecek egzersiz bulunamadı.", style: TextStyle(color: Colors.white70)));
+    }
+
+    return RefreshIndicator(
+      color: Colors.cyanAccent,
+      onRefresh: _fetchExercises,
+      child: GridView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 12,
+          childAspectRatio: 0.78,
+        ),
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          return _buildExerciseCard(context, data[index]);
+        },
+      ),
+    );
+  }
+
+  Widget _buildFilterDropdown(String label, String value, List<String> items, ValueChanged<String?> onChanged) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFF11182F),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.cyanAccent.withOpacity(0.4)),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          dropdownColor: const Color(0xFF0F172A),
+          value: value,
+          isExpanded: true,
+          icon: const Icon(Icons.arrow_drop_down, color: Colors.cyanAccent),
+          style: const TextStyle(fontSize: 14, color: Colors.white),
+          onChanged: onChanged,
+          items: items.map((val) => DropdownMenuItem(value: val, child: Text(val))).toList(),
         ),
       ),
     );
   }
-}
 
-// --- DETAIL SCREEN (MAVİ TEMA) ---
-class ExerciseDetailScreen extends StatelessWidget {
-  final ExerciseItem exercise;
-  final VoidCallback onAddPressed;
-
-  const ExerciseDetailScreen({super.key, required this.exercise, required this.onAddPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 250.0,
-            floating: false, pinned: true,
-            // Mavi SliverAppBar
-            backgroundColor: Colors.blue,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(exercise.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-              background: Image.network(
-                exercise.imageUrl, fit: BoxFit.cover,
-                // Resim yüklenemezse mavi arka planlı placeholder
-                errorBuilder: (c,e,s) => Container(color: Colors.blue, child: const Icon(Icons.fitness_center, size: 80, color: Colors.white54)),
-              ),
-            ),
-            leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context)),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Wrap(
-                      spacing: 8,
-                      children: exercise.tags.map((tag) => Chip(
-                        // Mavi etiketler (Chip)
-                        label: Text(tag, style: const TextStyle(color: Colors.blue, fontSize: 12)),
-                        backgroundColor: Colors.blue.shade50,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: Colors.blue.shade100)),
-                      )).toList(),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text("Hakkında", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text(exercise.description, style: TextStyle(color: Colors.grey[700], height: 1.5)),
-                    const SizedBox(height: 24),
-                    const Text("Nasıl Yapılır?", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 12),
-                    ...exercise.steps.asMap().entries.map((entry) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 24, height: 24, alignment: Alignment.center,
-                              // Mavi adım numaraları
-                              decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
-                              child: Text("${entry.key + 1}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(child: Text(entry.value, style: const TextStyle(fontSize: 14, height: 1.4))),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    const SizedBox(height: 80),
-                  ],
-                ),
-              ),
-            ]),
+  Widget _buildExerciseCard(BuildContext context, ExerciseModel item) {
+    final difficultyLabel = (item.difficulty ?? "Intermediate").toUpperCase();
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF11182F), Color(0xFF0B1021)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.cyanAccent.withOpacity(0.35)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.cyanAccent.withOpacity(0.15),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -4))]),
-        child: SizedBox(
-          height: 50,
-          child: ElevatedButton(
-            // Mavi alt buton
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-            onPressed: onAddPressed,
-            child: const Text("Antrenman Listeme Ekle", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: () => _navigateToDetail(context, item),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  Hero(
+                    tag: 'exercise-${item.id}',
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
+                      child: item.imageUrl != null && item.imageUrl!.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: item.imageUrl!,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                              fadeInDuration: const Duration(milliseconds: 200),
+                              placeholder: (c, _) => Container(
+                                color: const Color(0xFF0B1021),
+                                alignment: Alignment.center,
+                                child: const CircularProgressIndicator(color: Colors.cyanAccent, strokeWidth: 2),
+                              ),
+                              errorWidget: (c, e, s) => Container(
+                                color: const Color(0xFF0B1021),
+                                alignment: Alignment.center,
+                                child: const Icon(Icons.broken_image, color: Colors.cyanAccent, size: 36),
+                              ),
+                            )
+                          : Container(
+                              color: const Color(0xFF0B1021),
+                              alignment: Alignment.center,
+                              child: const Icon(Icons.fitness_center, color: Colors.cyanAccent, size: 36),
+                            ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: InkWell(
+                      onTap: () => _showAddToWorkoutDialog(context, item),
+                      child: Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.cyanAccent),
+                        ),
+                        child: const Icon(Icons.add, color: Colors.cyanAccent, size: 18),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 10,
+                    bottom: 10,
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.cyanAccent),
+                      ),
+                      child: const Icon(Icons.play_arrow_rounded, color: Colors.cyanAccent),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      _chip(item.bodyPart, Colors.cyanAccent),
+                      const SizedBox(width: 6),
+                      _chip(difficultyLabel, Colors.pinkAccent),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _chip(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.5)),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600),
       ),
     );
   }
