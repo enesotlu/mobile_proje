@@ -13,7 +13,7 @@ class ExerciseService {
         'X-RapidAPI-Host': _apiHost,
       };
 
-  /// Temel GET isteği
+  
   static Future<List<dynamic>> _get(String path) async {
     final uri = Uri.parse('$_baseUrl$path');
     final response = await http.get(uri, headers: _headers);

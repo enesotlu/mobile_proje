@@ -35,7 +35,7 @@ class TaskNotifier extends StateNotifier<List<TaskItem>> {
     ];
   }
 
-  // Silme Fonksiyonu
+  // Delete Function
   void removeTask(String id) {
     state = state.where((task) => task.id != id).toList();
   }

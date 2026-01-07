@@ -75,12 +75,12 @@ class ExerciseDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             Text(
-              exercise.description.isNotEmpty ? exercise.description : "Bu egzersiz için açıklama bulunamadı.",
+              exercise.description.isNotEmpty ? exercise.description : "No description available for this exercise.",
               style: const TextStyle(fontSize: 16, color: Colors.white70, height: 1.5),
             ),
             const SizedBox(height: 20),
             const Text(
-              "Adımlar",
+              "Steps",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 12),
@@ -153,7 +153,7 @@ class ExerciseDetailScreen extends StatelessWidget {
                       ),
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Listene eklendi!")),
+                          const SnackBar(content: Text("Added to list!")),
                         );
                       },
                     ),
@@ -163,32 +163,32 @@ class ExerciseDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             const Text(
-              "İpuçları",
+              "Tips",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 8),
             const Text(
-              "Formunu koru, hareket aralığını kontrol et ve nefesini ritmik tut. Ağrı hissedersen zorlamayı bırak.",
+              "Maintain proper form, control your range of motion, and breathe rhythmically. Stop if you feel pain.",
               style: TextStyle(color: Colors.white70, height: 1.4),
             ),
             const SizedBox(height: 16),
             const Text(
-              "Yaygın Hatalar",
+              "Common Mistakes",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 8),
             const Text(
-              "Aşırı momentum kullanma, bel boşluğunu kaybetme, kontrolsüz iniş-kalkış ve uygunsuz nefes.",
+              "Avoid excessive momentum, maintaining core stability, uncontrolled movements, and improper breathing.",
               style: TextStyle(color: Colors.white70, height: 1.4),
             ),
             const SizedBox(height: 16),
             const Text(
-              "Güvenlik Notları",
+              "Safety Notes",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 8),
             const Text(
-              "Isınma yap, eklemlerini hazırlıksız yükleme. Ağrı veya rahatsızlıkta hareketi durdur ve hafiflet.",
+              "Warm up properly before starting. Don't load joints unexpectedly. Stop and reduce intensity if you feel pain or discomfort.",
               style: TextStyle(color: Colors.white70, height: 1.4),
             ),
             const SizedBox(height: 18),

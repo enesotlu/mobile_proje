@@ -45,18 +45,18 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               _currentIndex = index;
             });
           },
-          type: BottomNavigationBarType.fixed, // Butonlar kaymasın diye sabitliyoruz
+          type: BottomNavigationBarType.fixed, // Keep buttons fixed without scrolling
           backgroundColor: Colors.white,
-          selectedItemColor: Colors.blueAccent, // Seçili olanın rengi
-          unselectedItemColor: Colors.grey,     // Seçili olmayanın rengi
+          selectedItemColor: Colors.blueAccent, // Color of selected item
+          unselectedItemColor: Colors.grey,     // Color of unselected items
           showSelectedLabels: true,
-          showUnselectedLabels: false, // Seçili olmayanın yazısını gizle (Daha temiz görünüm)
+          showUnselectedLabels: false, // Hide unselected labels (Cleaner look)
 
           items: [
-            // --- 1. BUTON: ANASAYFA (Standart) ---
+            // --- 1. BUTTON: HOME (Standard) ---
             const BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded, size: 28), // Normal Boyut
-              label: 'Anasayfa',
+              icon: Icon(Icons.home_rounded, size: 28), // Normal Size
+              label: 'Home',
             ),
 
             // --- 2. BUTON: TASK MANAGER (BÜYÜK VE HAVALI) ---

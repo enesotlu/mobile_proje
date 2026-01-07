@@ -19,7 +19,7 @@ class TaskManagerTab extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24.0),
               child: Text(
-                "Görev Listesi",
+                "Task List",
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -33,7 +33,7 @@ class TaskManagerTab extends ConsumerWidget {
               child: tasks.isEmpty
                   ? Center(
                 child: Text(
-                  "Henüz görev eklenmemiş.",
+                  "No tasks added yet.",
                   style: TextStyle(color: Colors.grey[600]),
                 ),
               )

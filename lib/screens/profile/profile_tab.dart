@@ -37,7 +37,7 @@ class _ProfileTabState extends State<ProfileTab> {
         setState(() {
           _nameController.text = data['name'] ?? '';
           _surnameController.text = data['surname'] ?? '';
-          // Veritabanından sayı gelebilir, yazıya çevirip gösteriyoruz:
+          // Numbers may come from database, we convert and display them:
           _ageController.text = (data['age'] ?? '').toString();
           _heightController.text = (data['height'] ?? '').toString();
           _weightController.text = (data['weight'] ?? '').toString();
@@ -53,7 +53,7 @@ class _ProfileTabState extends State<ProfileTab> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
 
-      // Yazıyı Sayıya Çeviriyoruz (Parse)
+      // Convert Text to Number (Parse)
       int age = int.tryParse(_ageController.text) ?? 0;
       double height = double.tryParse(_heightController.text) ?? 0.0;
       double weight = double.tryParse(_weightController.text) ?? 0.0;
@@ -73,7 +73,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Profil başarıyla güncellendi!"),
+          content: Text("Profile updated successfully!"),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
         ),
@@ -128,7 +128,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 Positioned(
                   top: 50,
                   child: const Text(
-                    "Profil Düzenle",
+                    "Edit Profile",
                     style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -189,20 +189,20 @@ class _ProfileTabState extends State<ProfileTab> {
                     ),
                     child: Column(
                       children: [
-                        _buildModernTextField("Adınız", _nameController, Icons.person),
+                        _buildModernTextField("Your Name", _nameController, Icons.person),
                         const SizedBox(height: 15),
-                        _buildModernTextField("Soyadınız", _surnameController, Icons.person_outline),
+                        _buildModernTextField("Your Surname", _surnameController, Icons.person_outline),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
                   Row(
                     children: [
-                      Expanded(child: _buildStatCard("Yaş", _ageController, Icons.cake, Colors.orange)),
+                      Expanded(child: _buildStatCard("Age", _ageController, Icons.cake, Colors.orange)),
                       const SizedBox(width: 10),
-                      Expanded(child: _buildStatCard("Boy (cm)", _heightController, Icons.height, Colors.blue)),
+                      Expanded(child: _buildStatCard("Height (cm)", _heightController, Icons.height, Colors.blue)),
                       const SizedBox(width: 10),
-                      Expanded(child: _buildStatCard("Kilo (kg)", _weightController, Icons.monitor_weight, Colors.purple)),
+                      Expanded(child: _buildStatCard("Weight (kg)", _weightController, Icons.monitor_weight, Colors.purple)),
                     ],
                   ),
                   const SizedBox(height: 30),
@@ -215,7 +215,7 @@ class _ProfileTabState extends State<ProfileTab> {
                         backgroundColor: primaryColor,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       ),
-                      child: const Text("Değişiklikleri Kaydet", style: TextStyle(fontSize: 18, color: Colors.white)),
+                      child: const Text("Save Changes", style: TextStyle(fontSize: 18, color: Colors.white)),
                     ),
                   ),
                   const SizedBox(height: 30),

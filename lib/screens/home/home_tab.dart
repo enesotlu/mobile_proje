@@ -66,7 +66,7 @@ class HomeTab extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Hoş Geldin,",
+                          "Welcome,",
                           style: TextStyle(fontSize: 16, color: Colors.grey[600], fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(height: 4),
@@ -95,7 +95,7 @@ class HomeTab extends ConsumerWidget {
               ),
 
               const SizedBox(height: 30),
-              const Text("Kategoriler", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const Text("Categories", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
 
               // --- GRID MENÜ ---
@@ -106,10 +106,10 @@ class HomeTab extends ConsumerWidget {
                   mainAxisSpacing: 16.0,
                   childAspectRatio: 0.85,
                   children: [
-                    _buildModernCard(context, "Egzersiz", "Programını Takip Et", Icons.fitness_center_rounded, Colors.blueAccent, Colors.lightBlueAccent, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExercisesTab()))),
-                    _buildModernCard(context, "Hesapla", "Vücut Endeksi", Icons.calculate_rounded, Colors.orange, Colors.deepOrangeAccent, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CalculationsTab()))),
-                    _buildModernCard(context, "Takviye", "Supplement Listesi", Icons.local_pharmacy_rounded, Colors.green, Colors.tealAccent, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SupplementsTab()))),
-                    _buildModernCard(context, "Beslenme", "Diyet ve Öğünler", Icons.restaurant_menu_rounded, Colors.redAccent, Colors.pinkAccent, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NutritionTab()))),
+                    _buildModernCard(context, "Exercise", "Follow Your Program", Icons.fitness_center_rounded, Colors.blueAccent, Colors.lightBlueAccent, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ExercisesTab()))),
+                    _buildModernCard(context, "Calculate", "Body Index", Icons.calculate_rounded, Colors.orange, Colors.deepOrangeAccent, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CalculationsTab()))),
+                    _buildModernCard(context, "Supplements", "Supplement List", Icons.local_pharmacy_rounded, Colors.green, Colors.tealAccent, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SupplementsTab()))),
+                    _buildModernCard(context, "Nutrition", "Diet and Meals", Icons.restaurant_menu_rounded, Colors.redAccent, Colors.pinkAccent, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NutritionTab()))),
                   ],
                 ),
               ),

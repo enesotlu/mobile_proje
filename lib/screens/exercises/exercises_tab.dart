@@ -18,21 +18,21 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
   final TextEditingController _setsController = TextEditingController(text: "3");
   final TextEditingController _repsController = TextEditingController(text: "12");
 
-  String _selectedCategory = "Tümü";
-  String _selectedEquipment = "Tümü";
-  String _selectedDifficulty = "Tümü";
+  String _selectedCategory = "All";
+  String _selectedEquipment = "All";
+  String _selectedDifficulty = "All";
 
-  final List<String> _categories = ["Tümü", "Göğüs", "Sırt", "Bacak", "Omuz", "Kol", "Karın", "Cardio"];
-  final List<String> _equipments = ["Tümü", "Barbell", "Dumbbell", "Makine", "Vücut Ağırlığı", "Kablo"];
-  final List<String> _difficulties = ["Tümü", "Beginner", "Intermediate", "Advanced"];
+  final List<String> _categories = ["All", "Chest", "Back", "Legs", "Shoulders", "Arms", "Abs", "Cardio"];
+  final List<String> _equipments = ["All", "Barbell", "Dumbbell", "Machine", "Body Weight", "Cable"];
+  final List<String> _difficulties = ["All", "Beginner", "Intermediate", "Advanced"];
 
   final Map<String, String> _bodyPartMap = {
-    "Göğüs": "chest",
-    "Sırt": "back",
-    "Bacak": "upper legs",
-    "Omuz": "shoulders",
-    "Kol": "upper arms",
-    "Karın": "waist",
+    "Chest": "chest",
+    "Back": "back",
+    "Legs": "upper legs",
+    "Shoulders": "shoulders",
+    "Arms": "upper arms",
+    "Abs": "waist",
     "Cardio": "cardio",
   };
 
@@ -95,7 +95,7 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
     final query = _searchController.text.toLowerCase();
     return _exercises.where((ex) {
       final matchesSearch = query.isEmpty || ex.name.toLowerCase().contains(query);
-      final matchesDifficulty = _selectedDifficulty == "Tümü" || (ex.difficulty ?? "Intermediate").toLowerCase() == _selectedDifficulty.toLowerCase();
+      final matchesDifficulty = _selectedDifficulty == "All" || (ex.difficulty ?? "Intermediate").toLowerCase() == _selectedDifficulty.toLowerCase();
       return matchesSearch && matchesDifficulty;
     }).toList();
   }
@@ -121,15 +121,15 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
               ),
               const SizedBox(height: 16),
               _buildFilterDropdown("Kas Grubu", _selectedCategory, _categories, (val) {
-                setState(() => _selectedCategory = val ?? "Tümü");
+                setState(() => _selectedCategory = val ?? "All");
               }),
               const SizedBox(height: 12),
               _buildFilterDropdown("Ekipman", _selectedEquipment, _equipments, (val) {
-                setState(() => _selectedEquipment = val ?? "Tümü");
+                setState(() => _selectedEquipment = val ?? "All");
               }),
               const SizedBox(height: 12),
               _buildFilterDropdown("Zorluk", _selectedDifficulty, _difficulties, (val) {
-                setState(() => _selectedDifficulty = val ?? "Tümü");
+                setState(() => _selectedDifficulty = val ?? "All");
               }),
               const SizedBox(height: 16),
               SizedBox(
@@ -206,7 +206,7 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
                     child: TextField(
                       controller: _setsController,
                       keyboardType: TextInputType.number,
-                      decoration: InputDecoration(labelText: "Set", border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                      decoration: InputDecoration(labelText: "Sets", border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -214,7 +214,7 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
                     child: TextField(
                       controller: _repsController,
                       keyboardType: TextInputType.number,
-                      decoration: InputDecoration(labelText: "Tekrar", border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                      decoration: InputDecoration(labelText: "Reps", border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
                     ),
                   ),
                 ],
@@ -230,10 +230,10 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
                     ref.read(taskProvider.notifier).addTask(exercise.name, subtitle);
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("${exercise.name} eklendi!"), backgroundColor: Colors.green),
+                      SnackBar(content: Text("${exercise.name} added!"), backgroundColor: Colors.green),
                     );
                   },
-                  child: const Text("Listeme Ekle", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: const Text("Add to My List", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(height: 30),
