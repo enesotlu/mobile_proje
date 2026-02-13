@@ -126,7 +126,7 @@ class _CalorieEstimationScreenState extends State<CalorieEstimationScreen> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
-                      value: _activityType,
+                      initialValue: _activityType,
                       decoration: const InputDecoration(
                         labelText: 'Activity Type',
                         border: OutlineInputBorder(),
@@ -205,7 +205,7 @@ class _CalorieEstimationScreenState extends State<CalorieEstimationScreen> {
               const SizedBox(height: 24),
               Card(
                 elevation: 2,
-                color: Colors.blue.withOpacity(0.1),
+                color: Colors.blue.withAlpha((0.1 * 255).round()),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -248,7 +248,7 @@ class _CalorieEstimationScreenState extends State<CalorieEstimationScreen> {
             const SizedBox(height: 24),
             Card(
               elevation: 2,
-              color: Colors.green.withOpacity(0.1),
+              color: Colors.green.withAlpha((0.1 * 255).round()),
               child: const Padding(
                 padding: EdgeInsets.all(16),
                 child: Column(

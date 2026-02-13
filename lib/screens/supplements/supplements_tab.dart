@@ -50,7 +50,7 @@ class _SupplementsTabState extends State<SupplementsTab> {
             child: Column(
               children: [
                 DropdownButtonFormField<String>(
-                  value: _selectedCategory,
+                  initialValue: _selectedCategory,
                   decoration: const InputDecoration(
                     labelText: 'Filter by Category',
                     border: OutlineInputBorder(),
@@ -85,7 +85,7 @@ class _SupplementsTabState extends State<SupplementsTab> {
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: _selectedGoal,
+                  initialValue: _selectedGoal,
                   decoration: const InputDecoration(
                     labelText: 'Filter by Goal',
                     border: OutlineInputBorder(),
@@ -136,7 +136,7 @@ class _SupplementsTabState extends State<SupplementsTab> {
                   elevation: 2,
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Colors.purple.withOpacity(0.2),
+                      backgroundColor: Colors.purple.withAlpha((0.2 * 255).round()),
                       child: const Icon(Icons.medication, color: Colors.purple),
                     ),
                     title: Text(
@@ -159,12 +159,12 @@ class _SupplementsTabState extends State<SupplementsTab> {
                           children: [
                             Chip(
                               label: Text(supplement.category),
-                              backgroundColor: Colors.purple.withOpacity(0.2),
+                              backgroundColor: Colors.purple.withAlpha((0.2 * 255).round()),
                             ),
                             if (supplement.timing != null)
                               Chip(
                                 label: Text(supplement.timing!),
-                                backgroundColor: Colors.blue.withOpacity(0.2),
+                                backgroundColor: Colors.blue.withAlpha((0.2 * 255).round()),
                               ),
                           ],
                         ),

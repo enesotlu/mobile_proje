@@ -78,7 +78,7 @@ class _NutritionTabState extends State<NutritionTab> {
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _selectedMealType,
+                    initialValue: _selectedMealType,
                     decoration: const InputDecoration(
                       labelText: 'Filter by Meal Type',
                       border: OutlineInputBorder(),
@@ -139,7 +139,7 @@ class _NutritionTabState extends State<NutritionTab> {
                             width: 80,
                             height: 80,
                             decoration: BoxDecoration(
-                              color: Colors.orange.withOpacity(0.2),
+                              color: Colors.orange.withAlpha((0.2 * 255).round()),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
@@ -203,7 +203,7 @@ class _NutritionTabState extends State<NutritionTab> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withAlpha((0.1 * 255).round()),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(

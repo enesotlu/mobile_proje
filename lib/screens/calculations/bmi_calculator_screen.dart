@@ -120,7 +120,7 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color: _getStatusColor().withOpacity(0.1),
+                          color: _getStatusColor().withAlpha((0.1 * 255).round()),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -160,7 +160,7 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
             ),
             const SizedBox(height: 32),
             Card(
-              color: Colors.blue.withOpacity(0.1),
+              color: Colors.blue.withAlpha((0.1 * 255).round()),
               child: const Padding(
                 padding: EdgeInsets.all(16),
                 child: Column(

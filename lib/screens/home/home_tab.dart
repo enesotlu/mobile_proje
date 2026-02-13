@@ -25,8 +25,13 @@ class HomeTab extends ConsumerWidget {
     // Öncelik 3: Hiçbiri yoksa 'GymBuddy' yaz.
     String displayName = "GymBuddy";
 
-    if (firebaseUser?.displayName != null && firebaseUser!.displayName!.isNotEmpty) {
-      displayName = firebaseUser.displayName!;
+    final userDisplayName = userModel?.displayName;
+    final firebaseDisplayName = firebaseUser?.displayName;
+
+    if (userDisplayName != null && userDisplayName.isNotEmpty) {
+      displayName = userDisplayName;
+    } else if (firebaseDisplayName != null && firebaseDisplayName.isNotEmpty) {
+      displayName = firebaseDisplayName;
     }
     // Eğer User Modelinde isim alanı varsa şunun gibi yapabilirsin:
     // else if (userModel != null && userModel.name.isNotEmpty) {
@@ -84,7 +89,7 @@ class HomeTab extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 10)],
+                      boxShadow: [BoxShadow(color: Colors.grey.withAlpha((0.1 * 255).round()), blurRadius: 10)],
                     ),
                     child: IconButton(
                       onPressed: signOut,
@@ -128,11 +133,11 @@ class HomeTab extends ConsumerWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [c1, c2]),
-          boxShadow: [BoxShadow(color: c1.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 8))],
+          boxShadow: [BoxShadow(color: c1.withAlpha((0.4 * 255).round()), blurRadius: 12, offset: const Offset(0, 8))],
         ),
         child: Stack(
           children: [
-            Positioned(right: -10, bottom: -10, child: Icon(icon, size: 80, color: Colors.white.withOpacity(0.2))),
+            Positioned(right: -10, bottom: -10, child: Icon(icon, size: 80, color: Colors.white.withAlpha((0.2 * 255).round()))),
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -141,7 +146,7 @@ class HomeTab extends ConsumerWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), shape: BoxShape.circle),
+                    decoration: BoxDecoration(color: Colors.white.withAlpha((0.2 * 255).round()), shape: BoxShape.circle),
                     child: Icon(icon, color: Colors.white, size: 28),
                   ),
                   Column(
@@ -149,7 +154,7 @@ class HomeTab extends ConsumerWidget {
                     children: [
                       Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
                       const SizedBox(height: 4),
-                      Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.8))),
+                      Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.white.withAlpha((0.8 * 255).round()))),
                     ],
                   ),
                 ],

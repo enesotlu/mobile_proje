@@ -185,7 +185,7 @@ class _ProfileTabState extends State<ProfileTab> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 10)],
+                      boxShadow: [BoxShadow(color: Colors.grey.withAlpha((0.1 * 255).round()), blurRadius: 10)],
                     ),
                     child: Column(
                       children: [
@@ -247,7 +247,7 @@ class _ProfileTabState extends State<ProfileTab> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 8)],
+        boxShadow: [BoxShadow(color: Colors.grey.withAlpha((0.1 * 255).round()), blurRadius: 8)],
       ),
       child: Column(
         children: [

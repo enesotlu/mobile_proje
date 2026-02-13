@@ -17,11 +17,11 @@ class SupplementDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+              Container(
               height: 200,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.1),
+                color: Colors.purple.withAlpha((0.1 * 255).round()),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(
@@ -44,12 +44,12 @@ class SupplementDetailScreen extends StatelessWidget {
               children: [
                 Chip(
                   label: Text(supplement.category.toUpperCase()),
-                  backgroundColor: Colors.purple.withOpacity(0.2),
+                  backgroundColor: Colors.purple.withAlpha((0.2 * 255).round()),
                 ),
                 if (supplement.timing != null)
-                  Chip(
+                    Chip(
                     label: Text(supplement.timing!),
-                    backgroundColor: Colors.blue.withOpacity(0.2),
+                    backgroundColor: Colors.blue.withAlpha((0.2 * 255).round()),
                   ),
               ],
             ),
@@ -136,7 +136,7 @@ class SupplementDetailScreen extends StatelessWidget {
                 runSpacing: 8,
                 children: supplement.targetGoals!.map((goal) => Chip(
                       label: Text(goal),
-                      backgroundColor: Colors.purple.withOpacity(0.2),
+                      backgroundColor: Colors.purple.withAlpha((0.2 * 255).round()),
                     )).toList(),
               ),
             ],

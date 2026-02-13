@@ -95,7 +95,7 @@ class ExerciseDetailScreen extends StatelessWidget {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: Colors.cyanAccent.withOpacity(0.9),
+                          color: Colors.cyanAccent.withAlpha((0.9 * 255).round()),
                           shape: BoxShape.circle,
                         ),
                         child: Center(
@@ -199,12 +199,12 @@ class ExerciseDetailScreen extends StatelessWidget {
   }
 
   Widget _chip(String text, Color color) {
-    return Container(
+      return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withAlpha((0.15 * 255).round()),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withAlpha((0.5 * 255).round())),
       ),
       child: Text(
         text,

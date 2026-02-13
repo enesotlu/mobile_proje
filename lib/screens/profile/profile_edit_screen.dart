@@ -161,7 +161,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _selectedGender,
+                initialValue: _selectedGender,
                 items: const [
                   DropdownMenuItem(value: 'male', child: Text('Male')),
                   DropdownMenuItem(value: 'female', child: Text('Female')),

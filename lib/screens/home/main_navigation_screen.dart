@@ -32,7 +32,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withAlpha((0.05 * 255).round()),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
@@ -66,13 +66,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                     color: _currentIndex == 1
-                        ? Colors.blueAccent
-                        : Colors.blueAccent.withOpacity(0.1),
+                      ? Colors.blueAccent
+                      : Colors.blueAccent.withAlpha((0.1 * 255).round()),
                     shape: BoxShape.circle,
                     boxShadow: [
                       if(_currentIndex == 1) // Sadece seçiliyken gölge ver
                         BoxShadow(
-                          color: Colors.blueAccent.withOpacity(0.4),
+                          color: Colors.blueAccent.withAlpha((0.4 * 255).round()),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         )

@@ -279,7 +279,7 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
                     decoration: BoxDecoration(
                       color: const Color(0xFF11182F),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.cyanAccent.withOpacity(0.3)),
+                      border: Border.all(color: Colors.cyanAccent.withAlpha((0.3 * 255).round())),
                     ),
                     child: TextField(
                       controller: _searchController,
@@ -330,7 +330,7 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
                   ),
                   selectedColor: Colors.cyanAccent,
                   backgroundColor: const Color(0xFF11182F),
-                  side: BorderSide(color: Colors.cyanAccent.withOpacity(0.4)),
+                  side: BorderSide(color: Colors.cyanAccent.withAlpha((0.4 * 255).round())),
                 );
               },
             ),
@@ -391,10 +391,10 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
   Widget _buildFilterDropdown(String label, String value, List<String> items, ValueChanged<String?> onChanged) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
+        decoration: BoxDecoration(
         color: const Color(0xFF11182F),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.cyanAccent.withOpacity(0.4)),
+        border: Border.all(color: Colors.cyanAccent.withAlpha((0.4 * 255).round())),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -421,10 +421,10 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.cyanAccent.withOpacity(0.35)),
+        border: Border.all(color: Colors.cyanAccent.withAlpha((0.35 * 255).round())),
         boxShadow: [
           BoxShadow(
-            color: Colors.cyanAccent.withOpacity(0.15),
+            color: Colors.cyanAccent.withAlpha((0.15 * 255).round()),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -473,11 +473,11 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
                     right: 10,
                     child: InkWell(
                       onTap: () => _showAddToWorkoutDialog(context, item),
-                      child: Container(
+                        child: Container(
                         width: 34,
                         height: 34,
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
+                          color: Colors.black.withAlpha((0.6 * 255).round()),
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.cyanAccent),
                         ),
@@ -492,7 +492,7 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.6),
+                        color: Colors.black.withAlpha((0.6 * 255).round()),
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.cyanAccent),
                       ),
@@ -534,9 +534,9 @@ class _ExercisesTabState extends ConsumerState<ExercisesTab> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withAlpha((0.15 * 255).round()),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withAlpha((0.5 * 255).round())),
       ),
       child: Text(
         text,
